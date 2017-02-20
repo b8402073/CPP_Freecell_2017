@@ -1085,6 +1085,10 @@ void TestWorldExt()
 
 	cout<<"2017/02/04"<<endl;
 	cout<<"加入NoAnswer全域變數,以後RightFS如果沒有找到答案就傳回NoAnswer"<<endl;
+
+	cout<<"2017/02/05"<<endl;
+	cout<<"https://github.com/b8402073/CPP_Freecell_2017.git"<<endl;
+
 	//getchar();
 }
 void TestWorld4_Something()

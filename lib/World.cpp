@@ -100,7 +100,8 @@ void World::ResumeWorld(Problem* PP,vector<HistoryItem> HH)
 	P= (*PP);
 	F= P.Synthesize_Finisher();
 	History.clear();
-	std::copy(bfChangeHistory.begin(), bfChangeHistory.end(), History.begin() );
+	//old : std::copy(bfChangeHistory.begin(), bfChangeHistory.end(), History.begin() );
+	std::copy(bfChangeHistory.begin(), bfChangeHistory.end(), back_inserter(History) );
 	ReleaseWorld();
 }
 void World::ReleaseWorld()
