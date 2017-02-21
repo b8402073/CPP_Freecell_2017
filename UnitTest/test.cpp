@@ -1,4 +1,5 @@
-
+#include <fstream>
+#include <string>
 //#include "card.h"
 #include "HistoryItem.h"
 //#include "Buffer.h"
@@ -48,6 +49,7 @@ void TestBuffer();
 void TestProblem();
 void TestWorld();
 void TestWorldExt();
+void Dump(const vector<WorldExt>& vec,string filename);
 int main()
 {	
 	cout<<_CardString[1] << _CardString[2]<<endl;
@@ -1196,6 +1198,7 @@ void TestWorld4_Something()
 		assert ( checkGetBytes(Layer2[i], ArrCardToVecCard(L[i],stm[i])));	
 
 	}
+	Dump(Layer2,"fff.txt");
 	cout<<"²Ä¤G¼hend"<<endl;
 	getchar();
 	
@@ -1206,5 +1209,33 @@ void TestWorld4_Something()
 		cout<<S.Result.str()<<endl;
 	}
 	*/
+
+}
+void Dump(const vector<WorldExt>& vec,string filename)
+{
+	ofstream outfile(filename.c_str());
+	outfile<<"int L[]={";
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<hand.size()<<",";
+	}
+	outfile<<"};\r\n";
+	outfile<<"char stm[][70]={"<<endl;
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<"{";
+		for (int j=0; j<hand.size(); j++)
+		{
+			outfile<< hand[j].estr()<<",";
+		}
+		outfile<<"},\r\n";
+	}
+	outfile<<"};"<<endl;
 
 }
