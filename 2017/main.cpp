@@ -3,6 +3,7 @@
 */
 
 #include "WorldExt.h"
+#include "Sage.h"
 #include "testStepByStep.h"
 using namespace std;
 int main()

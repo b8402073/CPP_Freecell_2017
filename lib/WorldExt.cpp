@@ -70,17 +70,19 @@ bool WorldExt::ChildRoutine(bool flag, WorldExt* that, int Level, int HiLevel)
 
 vector<WorldExt>& WorldExt::makeChild(int Level,int HiLevel,string Prefix)
 {
-	if (!makeChild0(Level,HiLevel))
+	//cout<<endl<< this->P.str()<<endl;
+
+	if (!makeChild0(Level,HiLevel))    //MOVELINE
 	{
-		if (!makeChild1(Level,HiLevel))
+		if (!makeChild1(Level,HiLevel))  //CONNECT
 		{
-			if (!makeChild2(Level,HiLevel))
+			if (!makeChild2(Level,HiLevel))//CONNECT(Cell,8)+DOWN(Cell)
 			{
-				if (!makeChild3AB(Level,HiLevel))
+				if (!makeChild3AB(Level,HiLevel)) //FINISH
 				{
-					if (!makeChild4(Level,HiLevel))
+					if (!makeChild4(Level,HiLevel))//DOWN(L1a)+DOWN(L1b)
 					{
-						makeChild5(Level,HiLevel);
+						makeChild5(Level,HiLevel); //POP(L1a)
 					}					
 				}
 			}

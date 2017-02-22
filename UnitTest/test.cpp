@@ -44,12 +44,45 @@ void TestWorld1_GetStrings();
 void TestWorld2_StepByStep();
 void TestWorld3_MoveLine();
 void TestWorld4_Something();
+void TestWorld5_MissionImpossible();
 void TestHistoryItem();
 void TestBuffer();
 void TestProblem();
 void TestWorld();
 void TestWorldExt();
 void Dump(const vector<WorldExt>& vec,string filename);
+void Dump(const vector<WorldExt>& vec,string filename)
+{
+	ofstream outfile(filename.c_str());
+	outfile<<"int L[]={";
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<hand.size()<<",";
+	}
+	outfile<<"};\r\n";
+	outfile<<"char stm[][70]={"<<endl;
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<"{";
+		for (int j=0; j<hand.size(); j++)
+		{
+			outfile<< hand[j].estr()<<",";
+		}
+		outfile<<"},\r\n";
+	}
+	outfile<<"};"<<endl;
+	for (int i=0; i<vec.size(); i++)
+	{
+		outfile<<endl<< vec[i].P.str()<<endl;
+	}
+}
+
 int main()
 {	
 	cout<<_CardString[1] << _CardString[2]<<endl;
@@ -123,6 +156,7 @@ void TestWorld()
 	TestWorld1_GetStrings();
 	TestWorld2_StepByStep();
 	TestWorld3_MoveLine();
+	TestWorld5_MissionImpossible();
 	TestWorld4_Something();
 }
 
@@ -1096,6 +1130,7 @@ void TestWorldExt()
 }
 void TestWorld4_Something()
 {
+	//about NoAnswer
 	World T(EXAMPLE_PROBLEM);
 	assert(!T.FINISH(H1));
 	assert(sizeof(NoAnswer)>0);
@@ -1103,6 +1138,8 @@ void TestWorld4_Something()
 	assert(!NoAnswer.isComplete());
 	assert(!T.equals(&NoAnswer));
 	assert(NoAnswer.equals(&NoAnswer));
+
+	//about MissionImpossible
 	World H(MissionImpossible);
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
@@ -1211,31 +1248,56 @@ void TestWorld4_Something()
 	*/
 
 }
-void Dump(const vector<WorldExt>& vec,string filename)
+void TestWorld5_MissionImpossible()
 {
-	ofstream outfile(filename.c_str());
-	outfile<<"int L[]={";
-	for (int i=0; i<vec.size(); i++)
+	cout<<"TestWorld5_MissionImpossible:"<<endl;
+	WorldExt H(MissionImpossible);	
+	cout<<"MissionImposible:"<<endl;
+	cout<< H.str()<<endl;
+	//以下是MakeStone4的內容碼
+
+	/* nothing important
+	if (inn.isComplete())
 	{
-		NP that(vec[i].P);
-		vector<Card> hand=that.getVector();
-		//that.PrintVector(hand);	
-		outfile<<hand.size()<<",";
+		isComplete=true; return;
 	}
-	outfile<<"};\r\n";
-	outfile<<"char stm[][70]={"<<endl;
-	for (int i=0; i<vec.size(); i++)
+	*/
+	//old:  vector<WorldExt> hand= H.makeChild(0,100,""); 
+	vector<WorldExt> Stone;
+	H.makeChild(0,100,"");   
+	assert(H.Child.size()==8);
+	vector< vector<WorldExt>* > stack;
+	vector<WorldExt>* NexLayer;
+	for (int i=1; i<4; i++)    //進行四層的MakeChild
 	{
-		NP that(vec[i].P);
-		vector<Card> hand=that.getVector();
-		//that.PrintVector(hand);	
-		outfile<<"{";
-		for (int j=0; j<hand.size(); j++)
+		NexLayer=new vector<WorldExt>();
+		int sz= (i==1) ? H.Child.size() : stack[ stack.size()-1]->size();
+		for (int j=0; j<sz; j++)
 		{
-			outfile<< hand[j].estr()<<",";
+			if (i==1)
+			{
+				H.Child[j].makeChild(0,100,"");
+				//std::sort(tmp.begin(), tmp.end(), TotalAV);
+				NexLayer->insert(NexLayer->end(), H.Child[j].Child.begin(), H.Child[j].Child.end());
+			}else
+			{
+				vector<WorldExt>* targetBuffer= stack[ stack.size()-1 ];
+				targetBuffer->at(j).makeChild(0,100,"");
+				//std::sort(tmp.begin(), tmp.end(), TotalAV);
+				NexLayer->insert(NexLayer->end(), targetBuffer->at(j).Child.begin(), targetBuffer->at(j).Child.end());
+			}
 		}
-		outfile<<"},\r\n";
+		stack.push_back(NexLayer);		
 	}
-	outfile<<"};"<<endl;
+	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
+	assert(stack[0].size()==47);
+	assert(stack[1].size()==215);
+	assert(stack[2].size()==4);
+	std::sort(Stone.begin(), Stone.end(), TotalAV);
+	for (int k=0; k< stack.size(); k++)
+	{		
+		delete (stack[k]);
+	}
+	cout<< "Stone=" << Stone.size() <<endl;
 
 }
