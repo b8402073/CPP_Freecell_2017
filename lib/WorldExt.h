@@ -1,14 +1,14 @@
+#include "U.h"
+#include "World.h"
+
 #define WE_NEED_UONE
 /*
 	尋找單一解的模組,已經成功跑了
 */
 
-#include "World.h"
 
 #ifndef WORLDEXT_H
 #define WORLDEXT_H
-
-class WorldExt;
 
 /*
 這些移到World裡面當static method
@@ -17,28 +17,6 @@ int  Finisher_Num(Card that,const Finisher& FF);
 int  Total_Obstruction_AV(const WorldExt& that,bool debug);
 bool CardNum_TotalAV(const World& prev,const World& next);
 */
-
-class U
-{
-private:
-	vector<WorldExt> Data[22][22][5];
-public:
-	U();
-private:
-	bool SubExist(const vector<WorldExt>& V,const WorldExt& that) const;
-public:
-	int WorldNum() const;
-	int WorldMax() const;
-	void Clear();
-	bool Add(WorldExt that);
-	bool Exist(WorldExt that) const; 
-	bool Remove(WorldExt that);
-	WorldExt* EE(WorldExt inn);  ////'輸入一個局,如果成功找到已經儲存過的局，把那個局傳回來，如果找不到傳回Null
-	int Locate(WorldExt that) const;	
-};
-#ifdef  WE_NEED_UONE
-static U  UOne;  //這是一個全域變數
-#endif
 
 static Card _NO_ANSWER_MB[4]= { Card(_EndOfStream),Card(_EndOfStream),Card(_EndOfStream),Card(_EndOfStream)};
 
@@ -84,29 +62,6 @@ static WorldExt  NoAnswer(Problem(Buffer(_NO_ANSWER_MB)),
 						  Finisher(_Empty,_Empty,_Empty,_Empty),
 						  vector<HistoryItem>(0) );
 
-class Sage
-{
-public:
-	const WorldExt root;
-	WorldExt Result;
-	int Total_Work;
-	int Cur_Pos;
-	int Selection;
-	bool isComplete;
-
-	Sage(WorldExt inn);
-	Sage(WorldExt inn,int Select);
-	bool Run1(bool prt_debug);   //隨便找一個解
-	bool Run2(bool prt_debug);   //找一個比較好的解,依賴RunX
-	WorldExt RunX(bool prt_debug,int X);
-
-	vector<WorldExt> Stone;
-public:
-	//void MakeStone(WorldExt inn);
-	void MakeStone4(WorldExt inn);
-private:
-	WorldExt RightFS(vector<WorldExt> inn);
-};
 
 
 bool TotalAV(const World& X,const World& Y);
