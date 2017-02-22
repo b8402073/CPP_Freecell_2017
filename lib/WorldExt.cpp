@@ -1,5 +1,9 @@
 #include "U.h"
 #include "WorldExt.h"
+WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)), 
+						  Finisher(_Empty,_Empty,_Empty,_Empty),
+						  vector<HistoryItem>(0) );
+
 WorldExt::WorldExt(const Problem &PP)
 :World(PP){}
 

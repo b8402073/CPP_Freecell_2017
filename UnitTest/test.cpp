@@ -82,6 +82,11 @@ void Dump(const vector<WorldExt>& vec,string filename)
 		outfile<<endl<< vec[i].P.str()<<endl;
 	}
 }
+void TestBeforeSage() 
+{
+	TestWorld5_MissionImpossible();
+	TestWorld4_Something();
+}
 
 int main()
 {	
@@ -94,6 +99,7 @@ int main()
 	TestProblem();
 	TestWorld();
 	TestWorldExt();
+	TestBeforeSage();
 	getchar();
 	return 0;
 }
@@ -156,8 +162,6 @@ void TestWorld()
 	TestWorld1_GetStrings();
 	TestWorld2_StepByStep();
 	TestWorld3_MoveLine();
-	TestWorld5_MissionImpossible();
-	TestWorld4_Something();
 }
 
 void TestWorld0_AutoSafeUp()
@@ -1133,17 +1137,18 @@ void TestWorld4_Something()
 	//about NoAnswer
 	World T(EXAMPLE_PROBLEM);
 	assert(!T.FINISH(H1));
-	assert(sizeof(NoAnswer)>0);
-	assert(NoAnswer.P.CardNum()>0);
-	assert(!NoAnswer.isComplete());
-	assert(!T.equals(&NoAnswer));
-	assert(NoAnswer.equals(&NoAnswer));
+	assert(sizeof(WorldExt::NoAnswer)>0);
+	assert(WorldExt::NoAnswer.P.CardNum()>0);
+	assert(!WorldExt::NoAnswer.isComplete());
+	assert(!T.equals(&WorldExt::NoAnswer));
+	assert(WorldExt::NoAnswer.equals(&WorldExt::NoAnswer));
 
 	//about MissionImpossible
+	UOne.Clear();     
 	World H(MissionImpossible);
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
-	WorldExt XX(MissionImpossible);
+	WorldExt XX(MissionImpossible);	
 	XX.makeChild(0,100,"");
 	assert(XX.Child.size()==8);
 	cout<<"²Ä¤@¼h"<<endl;
@@ -1251,6 +1256,7 @@ void TestWorld4_Something()
 void TestWorld5_MissionImpossible()
 {
 	cout<<"TestWorld5_MissionImpossible:"<<endl;
+	UOne.Clear();
 	WorldExt H(MissionImpossible);	
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
@@ -1290,14 +1296,15 @@ void TestWorld5_MissionImpossible()
 		stack.push_back(NexLayer);		
 	}
 	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
-	assert(stack[0].size()==47);
-	assert(stack[1].size()==215);
-	assert(stack[2].size()==4);
+	assert(stack[0]->size()==47);
+	assert(stack[1]->size()==215);
+	assert(stack[2]->size()==4);
 	std::sort(Stone.begin(), Stone.end(), TotalAV);
 	for (int k=0; k< stack.size(); k++)
 	{		
 		delete (stack[k]);
 	}
+	assert(Stone.size()==4);
 	cout<< "Stone=" << Stone.size() <<endl;
 
 }

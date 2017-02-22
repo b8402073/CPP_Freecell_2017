@@ -53,14 +53,22 @@ public:
 	bool CONNECT(Card Upper,Card Lower);
 	//bool FINISH(Card that);
 	bool DOWN(Card that);
+	static WorldExt NoAnswer;
 };
 /***
  * NoAnswer是一個特別的變數,配合Sage::RightFS使用;
  * 這個東西的設計重點在於NoAnswer.P.CardNum()!=0, 所以NoAnswer.isComplete()==false
  */
+/* old
 static WorldExt  NoAnswer(Problem(Buffer(_NO_ANSWER_MB)), 
 						  Finisher(_Empty,_Empty,_Empty,_Empty),
 						  vector<HistoryItem>(0) );
+*/
+
+
+
+
+
 
 
 

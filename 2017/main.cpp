@@ -21,8 +21,8 @@ int main()
 
 	};
 	cout<<"No Answer:"<<endl;
-	cout<< NoAnswer.str()<<endl;
-	cout<<"NoAnswer.equals(&NoAnswer)="<<  NoAnswer.equals( &NoAnswer) <<endl;
+	cout<< WorldExt::NoAnswer.str()<<endl;
+	cout<<"NoAnswer.equals(&NoAnswer)="<<  WorldExt::NoAnswer.equals( &WorldExt::NoAnswer) <<endl;
 
 	const static Problem EXAMPLE_PROBLEM(_EX_ARR, EX_BUFFER);
 

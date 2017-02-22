@@ -111,7 +111,7 @@ WorldExt Sage::RightFS(std::vector<WorldExt> inn)
 				if (inn[0].History.size() +inn[0].P.CardNum() > Result.History.size() )
 				{
 					//這一群解不用找了
-					return NoAnswer;
+					return WorldExt::NoAnswer;
 				}
 			}
 
@@ -121,7 +121,7 @@ WorldExt Sage::RightFS(std::vector<WorldExt> inn)
 				return inn[0];
 			}else if (isComplete)
 			{
-				return NoAnswer;
+				return WorldExt::NoAnswer;
 			}
 			vector<WorldExt> NexLayer;
 			for (int k=0; k< mmin(Selection,inn.size()); k++)
@@ -137,11 +137,11 @@ WorldExt Sage::RightFS(std::vector<WorldExt> inn)
 				//std::copy(NexLayer.begin(), NexLayer.end(), inn.begin());
 				inn.insert(inn.end(), NexLayer.begin(), NexLayer.end() );
 			}else
-				return NoAnswer;
+				return WorldExt::NoAnswer;
 		}else
-			return NoAnswer;
+			return WorldExt::NoAnswer;
 	}
-	return NoAnswer;
+	return WorldExt::NoAnswer;
 }
 /***
  * 隨便找一個解
@@ -219,7 +219,7 @@ WorldExt Sage::RunX(bool prt_debug,int X)
 	if (hand.isComplete())
 		return hand;
 	isComplete=true;
-	return NoAnswer;
+	return WorldExt::NoAnswer;
 }
 bool TotalAV(const World& X,const World& Y)
 {
