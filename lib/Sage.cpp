@@ -40,6 +40,7 @@ void Sage::MakeStone4(WorldExt inn)
 	{
 		delete (stack[k]);
 	}
+
 }
 /*
 WorldExt Sage::RightFS(std::vector<WorldExt> inn)
