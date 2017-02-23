@@ -4,7 +4,8 @@
 #include "HistoryItem.h"
 //#include "Buffer.h"
 //#include "Problem.h"
-#include "WorldExt.h"
+//#include "WorldExt.h"
+#include "Sage.h"
 
 static Card   _EX_MB[4]=  {Card(_Empty),Card(C5), Card(S12),Card(_Empty)};
 static Buffer EX_BUFFER(_EX_MB);
@@ -94,11 +95,11 @@ int main()
 	
 	cout<< EXAMPLE_PROBLEM.str() <<endl;
 
-	TestBuffer();
-	TestHistoryItem();
-	TestProblem();
-	TestWorld();
-	TestWorldExt();
+	//TestBuffer();
+	//TestHistoryItem();
+	//TestProblem();
+	//TestWorld();
+	//TestWorldExt();
 	TestBeforeSage();
 	getchar();
 	return 0;
@@ -1132,6 +1133,11 @@ void TestWorldExt()
 
 	//getchar();
 }
+
+/***
+   這裡的程式碼是有用的
+ */
+
 void TestWorld4_Something()
 {
 	//about NoAnswer
@@ -1144,7 +1150,7 @@ void TestWorld4_Something()
 	assert(WorldExt::NoAnswer.equals(&WorldExt::NoAnswer));
 
 	//about MissionImpossible
-	UOne.Clear();     
+/*	
 	World H(MissionImpossible);
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
@@ -1244,67 +1250,26 @@ void TestWorld4_Something()
 	cout<<"第二層end"<<endl;
 	getchar();
 	
-	/*
+	
 	Sage S(XX);
 	if (S.Run1(true))
 	{
 		cout<<S.Result.str()<<endl;
 	}
-	*/
+*/
 
 }
 void TestWorld5_MissionImpossible()
 {
 	cout<<"TestWorld5_MissionImpossible:"<<endl;
-	UOne.Clear();
+
 	WorldExt H(MissionImpossible);	
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
-	//以下是MakeStone4的內容碼
-
-	/* nothing important
-	if (inn.isComplete())
-	{
-		isComplete=true; return;
-	}
-	*/
-	//old:  vector<WorldExt> hand= H.makeChild(0,100,""); 
-	vector<WorldExt> Stone;
-	H.makeChild(0,100,"");   
-	assert(H.Child.size()==8);
-	vector< vector<WorldExt>* > stack;
-	vector<WorldExt>* NexLayer;
-	for (int i=1; i<4; i++)    //進行四層的MakeChild
-	{
-		NexLayer=new vector<WorldExt>();
-		int sz= (i==1) ? H.Child.size() : stack[ stack.size()-1]->size();
-		for (int j=0; j<sz; j++)
-		{
-			if (i==1)
-			{
-				H.Child[j].makeChild(0,100,"");
-				//std::sort(tmp.begin(), tmp.end(), TotalAV);
-				NexLayer->insert(NexLayer->end(), H.Child[j].Child.begin(), H.Child[j].Child.end());
-			}else
-			{
-				vector<WorldExt>* targetBuffer= stack[ stack.size()-1 ];
-				targetBuffer->at(j).makeChild(0,100,"");
-				//std::sort(tmp.begin(), tmp.end(), TotalAV);
-				NexLayer->insert(NexLayer->end(), targetBuffer->at(j).Child.begin(), targetBuffer->at(j).Child.end());
-			}
-		}
-		stack.push_back(NexLayer);		
-	}
-	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
-	assert(stack[0]->size()==47);
-	assert(stack[1]->size()==215);
-	assert(stack[2]->size()==4);
-	std::sort(Stone.begin(), Stone.end(), TotalAV);
-	for (int k=0; k< stack.size(); k++)
-	{		
-		delete (stack[k]);
-	}
-	assert(Stone.size()==4);
-	cout<< "Stone=" << Stone.size() <<endl;
-
+	Sage S(H);
+	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
+	getchar();
+//	assert(stack[0]->size()==47);
+//	assert(stack[1]->size()==215);
+//	assert(stack[2]->size()==4);
 }

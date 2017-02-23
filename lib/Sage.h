@@ -20,11 +20,12 @@ public:
 	WorldExt RunX(bool prt_debug,int X);
 
 	vector<WorldExt> Stone;
+	vector<WorldExt> Answers;
 public:
 	//void MakeStone(WorldExt inn);
 	void MakeStone4(WorldExt inn);
 private:
-	WorldExt RightFS(vector<WorldExt> inn);
+//	WorldExt RightFS(vector<WorldExt> inn);
 };
 
 #endif

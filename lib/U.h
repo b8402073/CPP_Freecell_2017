@@ -23,6 +23,6 @@ public:
 	int Locate(WorldExt that) const;	
 };
 
-static U  UOne;  //這是一個全域變數
+//static U  UOne;  //要拿掉了
 
 #endif

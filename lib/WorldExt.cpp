@@ -5,34 +5,35 @@ WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)),
 						  vector<HistoryItem>(0) );
 
 WorldExt::WorldExt(const Problem &PP)
-:World(PP){}
+:World(PP),MyChild(NULL),MyCompleteAnswer(NULL){}
 
 
 WorldExt::WorldExt(const Problem& PP,const vector<HistoryItem>& HH)
-:World(PP,HH){}
+:World(PP,HH),MyChild(NULL),MyCompleteAnswer(NULL){}
 
 WorldExt::WorldExt(const Problem& PP,const Finisher& FF, const vector<HistoryItem>& HH)
-:World(PP,FF,HH){}
+:World(PP,FF,HH),MyChild(NULL),MyCompleteAnswer(NULL){}
 
 WorldExt::WorldExt(const WorldExt& WE)
-:World(WE) {}
+:World(WE),MyChild(NULL),MyCompleteAnswer(NULL) {}
 
 WorldExt::WorldExt()
-:World(Problem(),Finisher(C13,D13,H13,S13) ){}
+:World(Problem(),Finisher(C13,D13,H13,S13) ),MyChild(NULL),MyCompleteAnswer(NULL){}
 
 
 WorldExt* WorldExt::copy() const
 {
 	return new WorldExt(P,F,History);
 }
-bool WorldExt::ChildRoutine(bool flag, WorldExt* that, int Level, int HiLevel)
+
+bool WorldExt::ChildRoutine(bool flag, WorldExt* that, int Level)
 {
 	//cout<< this->str()<<endl;    //code for debugging
 	if (flag)
 	{
 		if (!that->isDead())
 		{
-			//要有快速解可以在這裡加that.AutoSafeUp();
+			//要有快速解可以在這裡加that.AutoSafeUp();但是這不是正規的做法..
 			WorldExt* Copy=that->copy();
 			Copy->ALLUP();
 			if (Copy->isComplete())
@@ -42,69 +43,52 @@ bool WorldExt::ChildRoutine(bool flag, WorldExt* that, int Level, int HiLevel)
 			delete Copy;
 			if (that->isComplete())
 			{
-				Child.push_back(*that);
+				MyCompleteAnswer->push_back(*that);
 				return true;
-			}else if (Level>=HiLevel)
-			{
-				Child.push_back(*that);
-				return false;
-			}else if (!UOne.Exist(*that))
-			{	
-				UOne.Add(*that);
-				Child.push_back(*that);
-				return false;
 			}else
 			{
-				//如果UOne已經存在that
-				WorldExt* hand=UOne.EE(*that);
-				const vector<HistoryItem>& Old= hand->History;
-				const vector<HistoryItem>& nnew=that->History;
-				if (BetterHistoryArbitary(nnew,Old))
-				{
-					hand->History.clear();
-					hand->History.insert(hand->History.end(), nnew.begin(), nnew.end() );					
-					Child.push_back(*that);
-				}
+				MyChild->push_back(*that);
 				return false;
 			}
 		}
 	}
 	return false;
 }
-
-vector<WorldExt>& WorldExt::makeChild(int Level,int HiLevel,string Prefix)
+void WorldExt::makeChild(int Level,vector<WorldExt>* ptrChild, vector<WorldExt>* ptrCompleteAnswer)
 {
+	if (ptrChild==NULL)
+		MyChild=new vector<WorldExt>();
+	else
+		MyChild=ptrChild;
+
+	if (ptrCompleteAnswer==NULL)
+		MyCompleteAnswer=new vector<WorldExt>();
+	else
+		MyCompleteAnswer=ptrCompleteAnswer;
+
 	//cout<<endl<< this->P.str()<<endl;
 
-	if (!makeChild0(Level,HiLevel))    //MOVELINE
+	if (!makeChild0(Level))    //MOVELINE
 	{
-		if (!makeChild1(Level,HiLevel))  //CONNECT
+		if (!makeChild1(Level))  //CONNECT
 		{
-			if (!makeChild2(Level,HiLevel))//CONNECT(Cell,8)+DOWN(Cell)
+			if (!makeChild2(Level))//CONNECT(Cell,8)+DOWN(Cell)
 			{
-				if (!makeChild3AB(Level,HiLevel)) //FINISH
+				if (!makeChild3AB(Level)) //FINISH
 				{
-					if (!makeChild4(Level,HiLevel))//DOWN(L1a)+DOWN(L1b)
+					if (!makeChild4(Level))//DOWN(L1a)+DOWN(L1b)
 					{
-						makeChild5(Level,HiLevel); //POP(L1a)
+						makeChild5(Level); //POP(L1a)
 					}					
 				}
 			}
 		}
 	}
-	if (Prefix!="")
-	{
-		//Java Code
-		//String FN="C:\\Tmp\\"+"J"+Prefix+"_"+Level+"_beforeSort.TXT";
-        //Verify.WriteStringToText(FN, Verify.ListWorldToString(Child, true, true,true));
-		cout<<"Hello"<<endl;
-	}
-	
-	//@@?
-	//std::sort(Child.begin(), Child.end(), CardNum_TotalAV);  //為求快速,所以暫時REM此行
-	return Child;
+
+	//std::sort(MyChild->begin(), MyChild->end(), CardNum_TotalAV);  //為求快速,所以暫時REM此行
+
 }
-bool WorldExt::makeChild0(int Level, int HiLevel)  //MOVELINE
+bool WorldExt::makeChild0(int Level)  //MOVELINE
 {
 	int i,j;
 	for ( i=1; i<=8; i++)
@@ -120,7 +104,7 @@ bool WorldExt::makeChild0(int Level, int HiLevel)  //MOVELINE
 					upper.GetSuit()!=NONE)
 				{
 					WorldExt* that=(this->copy());
-					if (!ChildRoutine(that->MOVELINE(upper,lower),that,Level,HiLevel))
+					if (!ChildRoutine(that->MOVELINE(upper,lower),that,Level))
 					{
 						delete that;
 						continue;
@@ -136,7 +120,7 @@ bool WorldExt::makeChild0(int Level, int HiLevel)  //MOVELINE
 	}
 	return false;
 }
-bool WorldExt::makeChild1(int Level, int HiLevel)  //CONNECT(8,8)
+bool WorldExt::makeChild1(int Level)  //CONNECT(8,8)
 {
 	for (int i=1; i<=8; i++)
 	{
@@ -152,7 +136,7 @@ bool WorldExt::makeChild1(int Level, int HiLevel)  //CONNECT(8,8)
 					if (Problem::Rule(upper,lower))
 					{
 						WorldExt* that= this->copy();
-						if (!ChildRoutine(that->CONNECT(upper,lower),that,Level,HiLevel))
+						if (!ChildRoutine(that->CONNECT(upper,lower),that,Level))
 						{
 							delete that;
 							continue;
@@ -168,7 +152,7 @@ bool WorldExt::makeChild1(int Level, int HiLevel)  //CONNECT(8,8)
 	}
 	return false;
 }
-bool WorldExt::makeChild2(int Level,int HiLevel)  //CONNECT(Cell,8)+DOWN(Cell)
+bool WorldExt::makeChild2(int Level)  //CONNECT(Cell,8)+DOWN(Cell)
 {	
 	vector<Card> B= P.GetBuffer().toVector();
 	for (int i=0; i<B.size(); i++)
@@ -182,7 +166,7 @@ bool WorldExt::makeChild2(int Level,int HiLevel)  //CONNECT(Cell,8)+DOWN(Cell)
 				if (Problem::Rule(upper,lower))
 				{
 					WorldExt* that=this->copy();
-					if (!ChildRoutine(that->CONNECT(upper,lower),that,Level,HiLevel))
+					if (!ChildRoutine(that->CONNECT(upper,lower),that,Level))
 					{
 						delete that;
 						continue;
@@ -195,7 +179,7 @@ bool WorldExt::makeChild2(int Level,int HiLevel)  //CONNECT(Cell,8)+DOWN(Cell)
 			}else
 			{
 				WorldExt* that=this->copy();
-				if (!ChildRoutine(that->DOWN(lower),that,Level,HiLevel))
+				if (!ChildRoutine(that->DOWN(lower),that,Level))
 				{
 					delete that;
 					continue;
@@ -209,7 +193,7 @@ bool WorldExt::makeChild2(int Level,int HiLevel)  //CONNECT(Cell,8)+DOWN(Cell)
 	}
 	return false;
 }
-bool WorldExt::makeChild3AB(int Level,int HiLevel)  //FINISH
+bool WorldExt::makeChild3AB(int Level)  //FINISH
 {
 	vector<Card> B=this->P.GetBuffer().toVector();
 	for (int col=1; col<=8; col++)
@@ -225,7 +209,7 @@ bool WorldExt::makeChild3AB(int Level,int HiLevel)  //FINISH
 		if (F.Needed(B[i]))
 		{
 			WorldExt* that=this->copy();
-			if (!ChildRoutine(that->FINISH(B[i]),that,Level,HiLevel))
+			if (!ChildRoutine(that->FINISH(B[i]),that,Level))
 			{
 				delete that;
 				continue;
@@ -238,7 +222,7 @@ bool WorldExt::makeChild3AB(int Level,int HiLevel)  //FINISH
 	}
 	return false;
 }	
-bool WorldExt::makeChild4(int Level, int HiLevel)  //DOWN(L1a)+DOWN(L1b)
+bool WorldExt::makeChild4(int Level)  //DOWN(L1a)+DOWN(L1b)
 {
 	int dstLine=P.FirstBlankLine();
 	if (dstLine>0)
@@ -259,7 +243,7 @@ bool WorldExt::makeChild4(int Level, int HiLevel)  //DOWN(L1a)+DOWN(L1b)
 		for (int i=0; i<B.size(); i++)
 		{
 			WorldExt* that=this->copy();
-			if (!ChildRoutine(that->DOWN(B[i]), that,Level,HiLevel))
+			if (!ChildRoutine(that->DOWN(B[i]), that,Level))
 			{
 				delete that;
 				continue;
@@ -273,7 +257,7 @@ bool WorldExt::makeChild4(int Level, int HiLevel)  //DOWN(L1a)+DOWN(L1b)
 	}
 	return false;
 }
-bool WorldExt::makeChild5(int Level, int HiLevel)  //POP(L1a)
+bool WorldExt::makeChild5(int Level)  //POP(L1a)
 {
 	if (P.Available()>0)
 	{
@@ -283,7 +267,7 @@ bool WorldExt::makeChild5(int Level, int HiLevel)  //POP(L1a)
 			if (Hand!=NULL)
 			{
 				WorldExt* that=this->copy();
-				if (!ChildRoutine(that->POP(Hand),that,Level,HiLevel))
+				if (!ChildRoutine(that->POP(Hand),that,Level))
 				{
 					delete that;
 					continue;

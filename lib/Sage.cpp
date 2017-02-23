@@ -3,62 +3,13 @@ Sage::Sage(WorldExt inn)
 :root(inn),isComplete(false)
 {
 	Selection=100;
-	UOne.Clear();
 	MakeStone4(root);
 }
 Sage::Sage(WorldExt inn,int Select)
 :root(inn),Selection(Select),isComplete(false)
 {
-	UOne.Clear();
 	MakeStone4(root);
 }
-
-/*
-void Sage::MakeStone(WorldExt inn)
-{
-	if (inn.isComplete())
-	{
-		isComplete=true;
-		return;
-	}
-	vector<WorldExt> C1= inn.makeChild(0,100,"");
-	vector<WorldExt> C2;
-	for (int i=0; i<C1.size(); i++)
-	{
-		if (C1[i].isComplete())
-		{
-			Result=C1[i];
-			isComplete=true;
-			return;
-		}else if (C1[i].isDead())
-			continue;
-		else
-		{
-			C1[i].makeChild(0,100,"");
-			C2.insert(C2.end(),C1[i].Child.begin(), C1[i].Child.end());
-		}
-	}
-	std::sort(C2.begin(), C2.end(), TotalAV);
-									
-	for (int i=0; i<C2.size(); i++)
-	{
-		if (C2[i].isComplete())
-		{
-			Result=C2[i];
-			isComplete=true;
-			return;
-		}else if (C2[i].isDead())
-			continue;
-		else
-		{
-			C2[i].makeChild(0,100,"");
-			Stone.insert(Stone.end(), C2[i].Child.begin(), C2[i].Child.end());
-		}
-	}
-	std::sort(Stone.begin(), Stone.end(), TotalAV);
-}
-
-*/
 
 void Sage::MakeStone4(WorldExt inn)
 {
@@ -66,28 +17,21 @@ void Sage::MakeStone4(WorldExt inn)
 	{
 		isComplete=true; return;
 	}
-	vector<WorldExt> hand= inn.makeChild(0,100,"");
 	vector< vector<WorldExt>* > stack;
-	vector<WorldExt>* NexLayer;
+	vector<WorldExt>* NexLayer=new vector<WorldExt>();
+	inn.makeChild(0,NexLayer,&Answers);
+	stack.push_back(NexLayer);
 	for (int i=1; i<4; i++)    //進行四層的MakeChild
 	{
 		NexLayer=new vector<WorldExt>();
-		int sz= (i==1) ? hand.size() : stack[ stack.size()-1]->size();
+		int sz= stack[ stack.size()-1]->size();
 		for (int j=0; j<sz; j++)
 		{
-			if (i==1)
-			{
-				vector<WorldExt> tmp= hand[j].makeChild(0,100,"");
-				std::sort(tmp.begin(), tmp.end(), TotalAV);
-				NexLayer->insert(NexLayer->end(), tmp.begin(), tmp.end());
-			}else
-			{
-				vector<WorldExt>* targetBuffer= stack[ stack.size()-1 ];
-				vector<WorldExt> tmp= targetBuffer->at(j).makeChild(0,100,"");
-				std::sort(tmp.begin(), tmp.end(), TotalAV);
-				NexLayer->insert(NexLayer->end(), tmp.begin(), tmp.end());
-			}
+			WorldExt& target= stack[ stack.size()-1]->at(j);
+			target.makeChild(i,NexLayer,&Answers);
+
 		}
+		std::sort(NexLayer->begin(),NexLayer->end(), TotalAV);			
 		stack.push_back(NexLayer);		
 	}
 	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
@@ -97,6 +41,7 @@ void Sage::MakeStone4(WorldExt inn)
 		delete (stack[k]);
 	}
 }
+/*
 WorldExt Sage::RightFS(std::vector<WorldExt> inn)
 {
 	const int MaxHeight=150;
@@ -143,6 +88,8 @@ WorldExt Sage::RightFS(std::vector<WorldExt> inn)
 	}
 	return WorldExt::NoAnswer;
 }
+*/
+
 /***
  * 隨便找一個解
  */
@@ -160,12 +107,14 @@ bool Sage::Run1(bool prt_debug)
 		}
 		vector<WorldExt> LS;
 		LS.push_back(Stone[i]);
-		WorldExt hand= RightFS(LS);
+		/*WorldExt hand= RightFS(LS);
 		if (hand.isComplete())
 		{
 			Result=hand;
 			return true;
 		}
+		*/
+
 	}
 	isComplete=true;
  	return false;
@@ -215,10 +164,13 @@ WorldExt Sage::RunX(bool prt_debug,int X)
 	assert(X>=0 && X<sz);	
 	vector<WorldExt> LS;
 	LS.push_back(Stone[X]);
-	WorldExt hand=RightFS(LS);
+	//WorldExt hand=RightFS(LS);
+	/*
 	if (hand.isComplete())
 		return hand;
 	isComplete=true;
+	*/
+
 	return WorldExt::NoAnswer;
 }
 bool TotalAV(const World& X,const World& Y)
