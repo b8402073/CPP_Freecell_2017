@@ -1136,9 +1136,6 @@ void TestWorldExt()
 	//getchar();
 }
 
-/***
-   這裡的程式碼是有用的
- */
 
 void TestWorld4_About_NoAnswer()
 {
@@ -1154,7 +1151,7 @@ void TestWorld4_About_NoAnswer()
 
 }
 void TestWorld5_MissionImpossible()
-{
+{	
 	cout<<"TestWorld5_MissionImpossible:"<<endl;
 	WorldExt H(MissionImpossible);	
 	cout<<"MissionImposible:"<<endl;

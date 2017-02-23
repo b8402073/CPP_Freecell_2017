@@ -7,7 +7,7 @@
 
 class World
 {
-	friend class U;
+//	friend class U;
 public:   //protected:
 	Problem P;
 	Finisher F;

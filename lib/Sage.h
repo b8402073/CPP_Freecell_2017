@@ -26,6 +26,9 @@ public:
 	void MakeStone4(WorldExt inn);
 private:
 //	WorldExt RightFS(vector<WorldExt> inn);
+	void RemoveDuplication(vector<WorldExt>& inn);
 };
-
+bool TotalAV_SpEdition(const World& X,const World& Y);
+bool TotalAV(const World& X,const World& Y);
+bool EqualWorldExt(const WorldExt& X,const WorldExt& Y);
 #endif

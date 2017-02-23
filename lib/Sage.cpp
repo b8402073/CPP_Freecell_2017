@@ -31,8 +31,10 @@ void Sage::MakeStone4(WorldExt inn)
 			target.makeChild(i,NexLayer,&Answers);
 
 		}
-		std::sort(NexLayer->begin(),NexLayer->end(), TotalAV);			
+		RemoveDuplication( *NexLayer);
 		stack.push_back(NexLayer);		
+		time_t t=time(NULL);
+		printf("%s\r\n",ctime(&t));
 	}
 	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
 	std::sort(Stone.begin(), Stone.end(), TotalAV);
@@ -214,4 +216,89 @@ bool TotalAV(const World& X,const World& Y)
 	}
 	assert(false);
 	return WHEN_WE_DONT_CARE;
+}
+bool TotalAV_SpEdition(const World& X,const World& Y)
+{
+	const bool WHEN_WE_DONT_CARE=false;
+	int x2= World::Total_Obstruction_AV(X);
+	int y2= World::Total_Obstruction_AV(Y);
+	if (x2<y2)
+		return true;
+	else if (x2>y2)
+		return false;
+	else
+	{
+		int x1= X.P.CardNum()-X.P.Available();
+		int y1= Y.P.CardNum()-Y.P.Available();
+		if (x1<y1)
+			return true;
+		else if (x1>y1)
+			return false;
+		else
+		{
+			int x3= X.P.Available();
+			int y3= Y.P.Available();
+			if (x3>y3)
+				return true;
+			else if (x3<y3)
+				return false;
+			else
+			{
+				int x4=X.P.MaxOf_NowMaxPos();
+				int y4=Y.P.MaxOf_NowMaxPos();
+				if (x4<y4)
+					return true;
+				else if (x4>y4)
+					return false;
+				else
+				{
+					int x5=X.P.CardNum();
+					int y5=Y.P.CardNum();
+					if (x5<y5)
+						return true;
+					else if (x5>y5)
+						return false;
+					else
+					{
+						string x6=X.P.str();
+						string y6=Y.P.str();
+						if (x6<y6)
+							return true;
+						else if (x6>y6)
+							return false;
+						else
+						{
+							if (BetterHistoryEqualSize(X.History,Y.History))
+								return true;
+							else 
+								return false;  //因為WHEN_WE_DONT_CARE也傳回false							
+						}
+					}
+				}
+			}
+		}
+	}
+	assert(false);
+	return WHEN_WE_DONT_CARE;
+}
+bool EqualWorldExt(const WorldExt& X, const WorldExt& Y)
+{
+	if (X.equals(&Y))
+	{
+		cout<<"<<EQUAL start>>"<<endl;
+		cout<<X.str()<<endl;
+		cout<<Y.str()<<endl;
+		if (X.str()==Y.str())
+		{
+			assert(false);  //這裡要加強審查,為什麼會有錯...
+		}
+		cout<<"<<EQUAL end>>"<<endl;
+		return true;
+	}
+	return false;
+}
+void Sage::RemoveDuplication(vector<WorldExt>& inn)
+{
+	std::sort(inn.begin(), inn.end(), TotalAV_SpEdition);
+	std::unique(inn.begin(), inn.end(), EqualWorldExt);
 }
