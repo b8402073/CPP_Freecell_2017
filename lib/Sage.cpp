@@ -28,9 +28,12 @@ void Sage::MakeStone4(WorldExt inn)
 		for (int j=0; j<sz; j++)
 		{
 			WorldExt& target= stack[ stack.size()-1]->at(j);
+			cout<< target.str()<<endl;
 			target.makeChild(i,NexLayer,&Answers);
 
 		}
+		static char ttt[6];
+		Dump(*NexLayer,"Level"+string(_itoa(i,ttt,10))+".txt");
 		RemoveDuplication( *NexLayer);
 		stack.push_back(NexLayer);		
 		time_t t=time(NULL);
@@ -285,14 +288,17 @@ bool EqualWorldExt(const WorldExt& X, const WorldExt& Y)
 {
 	if (X.equals(&Y))
 	{
+/*
 		cout<<"<<EQUAL start>>"<<endl;
 		cout<<X.str()<<endl;
 		cout<<Y.str()<<endl;
 		if (X.str()==Y.str())
 		{
-			assert(false);  //這裡要加強審查,為什麼會有錯...
+			cout<<"fuck"<<endl;
+			assert(false);  //2017/02/24:加強審查的結果是這裡沒有錯
 		}
-		cout<<"<<EQUAL end>>"<<endl;
+ 		cout<<"<<EQUAL end>>"<<endl;
+*/
 		return true;
 	}
 	return false;

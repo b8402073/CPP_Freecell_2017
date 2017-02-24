@@ -1,4 +1,4 @@
-#include <fstream>
+
 #include <string>
 //#include "card.h"
 #include "HistoryItem.h"
@@ -52,38 +52,8 @@ void TestBuffer();
 void TestProblem();
 void TestWorld();
 void TestWorldExt();
-void Dump(const vector<WorldExt>& vec,string filename);
-void Dump(const vector<WorldExt>& vec,string filename)
-{
-	ofstream outfile(filename.c_str());
-	outfile<<"int L[]={";
-	for (int i=0; i<vec.size(); i++)
-	{
-		NP that(vec[i].P);
-		vector<Card> hand=that.getVector();
-		//that.PrintVector(hand);	
-		outfile<<hand.size()<<",";
-	}
-	outfile<<"};\r\n";
-	outfile<<"char stm[][70]={"<<endl;
-	for (int i=0; i<vec.size(); i++)
-	{
-		NP that(vec[i].P);
-		vector<Card> hand=that.getVector();
-		//that.PrintVector(hand);	
-		outfile<<"{";
-		for (int j=0; j<hand.size(); j++)
-		{
-			outfile<< hand[j].estr()<<",";
-		}
-		outfile<<"},\r\n";
-	}
-	outfile<<"};"<<endl;
-	for (int i=0; i<vec.size(); i++)
-	{
-		outfile<<endl<< vec[i].P.str()<<endl;
-	}
-}
+
+
 void TestBeforeSage() 
 {
 	TestWorld5_MissionImpossible();
@@ -1157,7 +1127,9 @@ void TestWorld5_MissionImpossible()
 	cout<<"MissionImposible:"<<endl;
 	cout<< H.str()<<endl;
 	Sage S(H);
+	assert(S.Stone.size()==12);
 	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
+
 
 }
 

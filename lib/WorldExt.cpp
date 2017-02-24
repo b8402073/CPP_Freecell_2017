@@ -267,8 +267,11 @@ bool WorldExt::makeChild5(int Level)  //POP(L1a)
 			if (Hand!=NULL)
 			{
 				WorldExt* that=this->copy();
+				int oldChildNumber=MyChild->size();
 				if (!ChildRoutine(that->POP(Hand),that,Level))
 				{
+					int newChildNumber=MyChild->size();
+					assert(newChildNumber-oldChildNumber<=1);
 					delete that;
 					continue;
 				}else
@@ -335,3 +338,34 @@ bool WorldExt::CONNECT(Card Upper,Card Lower)
 	return World::CONNECT(Upper,Lower);
 }
 
+void Dump(const vector<WorldExt>& vec,string filename)
+{
+	ofstream outfile(filename.c_str());
+	outfile<<"int L[]={";
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<hand.size()<<",";
+	}
+	outfile<<"};\r\n";
+	outfile<<"char stm[][70]={"<<endl;
+	for (int i=0; i<vec.size(); i++)
+	{
+		NP that(vec[i].P);
+		vector<Card> hand=that.getVector();
+		//that.PrintVector(hand);	
+		outfile<<"{";
+		for (int j=0; j<hand.size(); j++)
+		{
+			outfile<< hand[j].estr()<<",";
+		}
+		outfile<<"},\r\n";
+	}
+	outfile<<"};"<<endl;
+	for (int i=0; i<vec.size(); i++)
+	{
+		outfile<<endl<< vec[i].str()<<endl;
+	}
+}

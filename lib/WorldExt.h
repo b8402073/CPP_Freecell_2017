@@ -1,4 +1,4 @@
-
+#include <fstream>
 #include "World.h"
 
 /*
@@ -63,7 +63,7 @@ static WorldExt  NoAnswer(Problem(Buffer(_NO_ANSWER_MB)),
 
 
 
-
+void Dump(const vector<WorldExt>& vec,string filename);
 bool TotalAV(const World& X,const World& Y);
 
 #endif
