@@ -1,5 +1,7 @@
-#include "U.h"
+
 #include "WorldExt.h"
+vector<WorldExt*> WorldExt::Garbage[150];
+
 WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)), 
 						  Finisher(_Empty,_Empty,_Empty,_Empty),
 						  vector<HistoryItem>(0) );
@@ -31,6 +33,7 @@ bool WorldExt::ChildRoutine(bool flag, WorldExt* that, int Level)
 	//cout<< this->str()<<endl;    //code for debugging
 	if (flag)
 	{
+		//cout<< that->str()<<endl;  // code for debugging
 		if (!that->isDead())
 		{
 			//要有快速解可以在這裡加that.AutoSafeUp();但是這不是正規的做法..
@@ -84,7 +87,7 @@ void WorldExt::makeChild(int Level,vector<WorldExt>* ptrChild, vector<WorldExt>*
 			}
 		}
 	}
-
+	
 	//std::sort(MyChild->begin(), MyChild->end(), CardNum_TotalAV);  //為求快速,所以暫時REM此行
 
 }
@@ -99,7 +102,7 @@ bool WorldExt::makeChild0(int Level)  //MOVELINE
 			{
 				Card upper=this->P.Peek(i);
 				Card lower=this->P.Peek(j);
-				if (lower!=NULL && upper!=NULL &&
+				if (lower!=NULL  &&				//在這裡不檔(upper==NULL)
 					lower.GetSuit()!=NONE &&
 					upper.GetSuit()!=NONE)
 				{
@@ -230,7 +233,7 @@ bool WorldExt::makeChild4(int Level)  //DOWN(L1a)+DOWN(L1b)
 		vector<Card> B;		
 		for (int col=1; col<=8; col++)
 		{
-			Card hand=P.Peek(col);
+				Card hand=P.Peek(col);
 			if (hand!=NULL)
 			{
 				B.push_back(hand);
@@ -272,7 +275,7 @@ bool WorldExt::makeChild5(int Level)  //POP(L1a)
 				{
 					int newChildNumber=MyChild->size();
 					assert(newChildNumber-oldChildNumber<=1);
-					delete that;
+					delete that;   // 如果使用指標的設計要把這裡打掉
 					continue;
 				}else
 				{

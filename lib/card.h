@@ -2,6 +2,8 @@
 #include <cstring>
 #include <string>
 #include <iostream>
+//#include <vector>
+#include <list>
 
 #ifndef CARD_H
 #define CARD_H
@@ -83,4 +85,5 @@ inline int  mmin(int i,int j)   //return minimal element of i and j;
 {
 	return ((i<=j) ? i : j);
 }
+
 #endif

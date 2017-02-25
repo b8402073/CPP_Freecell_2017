@@ -1,5 +1,5 @@
 
-#include <string>
+//#include <string>
 //#include "card.h"
 #include "HistoryItem.h"
 //#include "Buffer.h"
@@ -56,8 +56,8 @@ void TestWorldExt();
 
 void TestBeforeSage() 
 {
-	TestWorld5_MissionImpossible();
-	TestWorld4_About_NoAnswer();
+	//TestWorld5_MissionImpossible();
+	//TestWorld4_About_NoAnswer();
 	TestWorld6_SageAboutExample();
 }
 
@@ -1129,6 +1129,7 @@ void TestWorld5_MissionImpossible()
 	Sage S(H);
 	assert(S.Stone.size()==12);
 	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
+	S.Run1(true);
 
 
 }
@@ -1138,5 +1139,8 @@ void TestWorld6_SageAboutExample()
 	WorldExt H(EXAMPLE_PROBLEM);
 	cout<< H.str()<<endl;
 	Sage S(H);
+	assert(S.Stone.size()==3908);
 	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
+	S.Run1(true);
+	cout<< S.Result.str()<<endl;
 }

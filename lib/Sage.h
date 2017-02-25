@@ -21,14 +21,15 @@ public:
 
 	vector<WorldExt> Stone;
 	vector<WorldExt> Answers;
+
 public:
-	//void MakeStone(WorldExt inn);
 	void MakeStone4(WorldExt inn);
 private:
-//	WorldExt RightFS(vector<WorldExt> inn);
-	void RemoveDuplication(vector<WorldExt>& inn);
+	WorldExt RightFS(WorldExt inn);
+	void Sort_and_RemoveDuplication(vector<WorldExt>* inn);
 };
 bool TotalAV_SpEdition(const World& X,const World& Y);
 bool TotalAV(const World& X,const World& Y);
-bool EqualWorldExt(const WorldExt& X,const WorldExt& Y);
+inline bool EqualWorldExt(const WorldExt& X,const WorldExt& Y){ return X.equals(&Y); }
+bool GoodSolution(const WorldExt& X, const WorldExt& Y);
 #endif

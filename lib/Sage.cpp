@@ -28,80 +28,105 @@ void Sage::MakeStone4(WorldExt inn)
 		for (int j=0; j<sz; j++)
 		{
 			WorldExt& target= stack[ stack.size()-1]->at(j);
-			cout<< target.str()<<endl;
+			//cout<< target.str()<<endl;
 			target.makeChild(i,NexLayer,&Answers);
-
 		}
-		static char ttt[6];
-		Dump(*NexLayer,"Level"+string(_itoa(i,ttt,10))+".txt");
-		RemoveDuplication( *NexLayer);
+
+		//Debug Code
+		//static char ttt[6];
+		//Dump(*NexLayer,"Level"+string(_itoa(i,ttt,10))+".txt");
+
+		Sort_and_RemoveDuplication( NexLayer);
 		stack.push_back(NexLayer);		
 		time_t t=time(NULL);
 		printf("%s\r\n",ctime(&t));
 	}
 	Stone.insert(Stone.end(), NexLayer->begin(), NexLayer->end() );
-	std::sort(Stone.begin(), Stone.end(), TotalAV);
-	for (int k=0; k< stack.size(); k++)
+	std::sort(Stone.begin(), Stone.end(), TotalAV_SpEdition);
+	 //這裡很容易判斷錯誤而到底要不要對 stack[k]的element進行delete 的動作
+	//2017/02/24的結論是"要!"
+	//考慮  int* a=new int(1); int *b=new int(2); int *c=new int(3); vector<int>* v=new vector<int>();
+	//v->push_back(*a); v->push_back(*b); v->push_back(*c);
+	//最後需要delete a; delete b; delete c;delete v;
+	/****************以上是錯誤的判斷***************/
+
+	//但是2017/02/25判斷的結果是"不要",因為在makeChild1~makeChild5裡面都有自動delete that;指標
+
+	for (int k=0; k< stack.size(); k++)  
 	{
 		delete (stack[k]);
 	}
 
 }
-/*
-WorldExt Sage::RightFS(std::vector<WorldExt> inn)
+
+WorldExt Sage::RightFS(WorldExt inn)
 {
-	const int MaxHeight=150;
-	for (int x=0; x<=MaxHeight; x++)
+	WorldExt& Best=WorldExt::NoAnswer;
+	if (Answers.size()>0) {
+		std::sort(Answers.begin(), Answers.end(), GoodSolution);
+		Answers.erase(Answers.begin()+1,Answers.end());
+		Best= Answers[0];
+	}
+	Answers.clear();
+	const int MaxHeight=300;
+	vector<WorldExt>* NexLayer=new vector<WorldExt>();
+	inn.makeChild(5,NexLayer,&Answers);	
+	for (int x=6; x<MaxHeight; x++)
 	{
-		//cout<<"Best(x="<<x<<"):"<<endl;
-		//cout<< inn[0].str()<<endl;
-		if (inn.size()>0)
+		cout<<"x="<<x<<" ";
+		cout<<endl<< NexLayer->at(0).str()<<endl;
+		cout<<"AnsSize="<<Answers.size()<<endl;
+		//const HistoryItem F6D=ItemFinish(D6);
+		//if (EqualHistoryItem(NexLayer->at(0).History[ NexLayer->at(0).History.size()-1 ] ,F6D))
+		//	cout<<"haha"<<endl;
+		if (NexLayer->size()>0)
 		{
-			if (Result.History.size()>0)
+			if (!Best.equals(&WorldExt::NoAnswer))
 			{
-				if (inn[0].History.size() +inn[0].P.CardNum() > Result.History.size() )
+				if (NexLayer->at(0).History.size() +NexLayer->at(0).P.CardNum() > Best.History.size() )
 				{
 					//這一群解不用找了
 					return WorldExt::NoAnswer;
 				}
 			}
-
-			if (inn[0].isComplete())
+			vector<WorldExt>* old=NexLayer;  //old should wait to die..
+			NexLayer=new vector<WorldExt>();
+			for (int k=0; k< mmin(Selection,old->size()); k++)
 			{
-				isComplete=true;
-				return inn[0];
-			}else if (isComplete)
-			{
-				return WorldExt::NoAnswer;
+				WorldExt& target=(old->at(k));
+				target.makeChild(x,NexLayer,&Answers);
 			}
-			vector<WorldExt> NexLayer;
-			for (int k=0; k< mmin(Selection,inn.size()); k++)
+			delete old;
+			Sort_and_RemoveDuplication(NexLayer);
+			if (Answers.size() >= 1)
 			{
-				inn[k].makeChild(x,100,"");
-				//Insert All elements in inn[k].Child into NexLayer
-				NexLayer.insert(NexLayer.end(),inn[k].Child.begin(), inn[k].Child.end());
+				std::sort(Answers.begin(), Answers.end(), GoodSolution);
+				if (!Answers[0].equals(&Best))
+				{
+					if (BetterHistoryArbitary(Answers[0].History, Best.History))
+					{
+						return Answers[0];
+					}
+				}
 			}
-			std::sort(NexLayer.begin(), NexLayer.end(),TotalAV);
-			if (NexLayer.size()>0)
+			if (NexLayer->size()>0)
 			{
-				inn.clear();
-				//std::copy(NexLayer.begin(), NexLayer.end(), inn.begin());
-				inn.insert(inn.end(), NexLayer.begin(), NexLayer.end() );
+				continue;
 			}else
 				return WorldExt::NoAnswer;
 		}else
 			return WorldExt::NoAnswer;
-	}
+	}	
 	return WorldExt::NoAnswer;
 }
-*/
+
 
 /***
  * 隨便找一個解
  */
 bool Sage::Run1(bool prt_debug)  
 {
-	if (isComplete)
+	if (Answers.size()>0)
 		return true;
 	int sz=Stone.size();
 	for (int i=0; i<sz; i++)
@@ -109,18 +134,17 @@ bool Sage::Run1(bool prt_debug)
 		Cur_Pos=i;
 		if (prt_debug)
 		{
-			cout<< Cur_Pos <<"/" << sz<<"\t\t\t"<<"time"<<endl;
+			cout<< Cur_Pos <<"/" << sz<<"\t\t\t";
+			time_t t=time(NULL);
+			printf("%s\r\n",ctime(&t));
 		}
-		vector<WorldExt> LS;
-		LS.push_back(Stone[i]);
-		/*WorldExt hand= RightFS(LS);
+
+		WorldExt hand= RightFS(Stone[i]);
 		if (hand.isComplete())
 		{
 			Result=hand;
 			return true;
 		}
-		*/
-
 	}
 	isComplete=true;
  	return false;
@@ -168,9 +192,8 @@ WorldExt Sage::RunX(bool prt_debug,int X)
 		return true;
 	int sz=Stone.size();
 	assert(X>=0 && X<sz);	
-	vector<WorldExt> LS;
-	LS.push_back(Stone[X]);
-	//WorldExt hand=RightFS(LS);
+	
+	//WorldExt hand=RightFS(Stone[X]);
 	/*
 	if (hand.isComplete())
 		return hand;
@@ -247,16 +270,16 @@ bool TotalAV_SpEdition(const World& X,const World& Y)
 				return false;
 			else
 			{
-				int x4=X.P.MaxOf_NowMaxPos();
-				int y4=Y.P.MaxOf_NowMaxPos();
+				int x4=X.P.CardNum();
+				int y4=Y.P.CardNum();
 				if (x4<y4)
 					return true;
 				else if (x4>y4)
 					return false;
 				else
 				{
-					int x5=X.P.CardNum();
-					int y5=Y.P.CardNum();
+					int x5=X.P.MaxOf_NowMaxPos();
+					int y5=Y.P.MaxOf_NowMaxPos();
 					if (x5<y5)
 						return true;
 					else if (x5>y5)
@@ -284,27 +307,13 @@ bool TotalAV_SpEdition(const World& X,const World& Y)
 	assert(false);
 	return WHEN_WE_DONT_CARE;
 }
-bool EqualWorldExt(const WorldExt& X, const WorldExt& Y)
+void Sage::Sort_and_RemoveDuplication(vector<WorldExt>* inn)  //包含有sort的動作
 {
-	if (X.equals(&Y))
-	{
-/*
-		cout<<"<<EQUAL start>>"<<endl;
-		cout<<X.str()<<endl;
-		cout<<Y.str()<<endl;
-		if (X.str()==Y.str())
-		{
-			cout<<"fuck"<<endl;
-			assert(false);  //2017/02/24:加強審查的結果是這裡沒有錯
-		}
- 		cout<<"<<EQUAL end>>"<<endl;
-*/
-		return true;
-	}
-	return false;
+	std::sort(inn->begin(), inn->end(), TotalAV_SpEdition);
+	std::unique(inn->begin(), inn->end(), EqualWorldExt);
 }
-void Sage::RemoveDuplication(vector<WorldExt>& inn)
+bool GoodSolution(const WorldExt& X,const WorldExt& Y)
 {
-	std::sort(inn.begin(), inn.end(), TotalAV_SpEdition);
-	std::unique(inn.begin(), inn.end(), EqualWorldExt);
+	assert(X.P.equals(&(Y.P)));
+	return BetterHistoryArbitary(X.History, Y.History);
 }

@@ -12,6 +12,7 @@
 static Card _NO_ANSWER_MB[4]= { Card(_EndOfStream),Card(_EndOfStream),Card(_EndOfStream),Card(_EndOfStream)};
 
 
+
 class WorldExt : public World     
 {
 public:	
@@ -43,10 +44,14 @@ public:
 	bool POP(Card that);
 	bool MOVELINE(Card High,Card Low);
 	bool CONNECT(Card Upper,Card Lower);
-	//bool FINISH(Card that);
+	//bool FINISH(Card that);   //不會有Ping-Pong效應
 	bool DOWN(Card that);
 	static WorldExt NoAnswer;
+	static vector<WorldExt*> Garbage[150];
 };
+
+//static vector<WorldExt*> Garbage[150];
+
 /***
  * NoAnswer是一個特別的變數,配合Sage::RightFS使用;
  * 這個東西的設計重點在於NoAnswer.P.CardNum()!=0, 所以NoAnswer.isComplete()==false
