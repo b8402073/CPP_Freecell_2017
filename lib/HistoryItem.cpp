@@ -200,3 +200,14 @@ bool EqualHistoryItem(HistoryItem a,HistoryItem b)
 	}
 	return false;
 }
+bool EqualHistoryVector(const vector<HistoryItem>& H1, const vector<HistoryItem>& H2)
+{
+	if (H1.size() != H2.size())
+		return false;
+	for (int i=0; i<H1.size(); i++)
+	{
+		if (!EqualHistoryItem(H1[i],H2[i]))
+			return false;
+	}
+	return true;
+}

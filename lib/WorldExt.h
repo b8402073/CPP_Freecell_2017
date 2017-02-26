@@ -47,7 +47,7 @@ public:
 	//bool FINISH(Card that);   //不會有Ping-Pong效應
 	bool DOWN(Card that);
 	static WorldExt NoAnswer;
-	static vector<WorldExt*> Garbage[150];
+	//static vector<WorldExt*> Garbage[150];
 };
 
 //static vector<WorldExt*> Garbage[150];

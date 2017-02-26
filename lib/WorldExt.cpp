@@ -1,6 +1,6 @@
 
 #include "WorldExt.h"
-vector<WorldExt*> WorldExt::Garbage[150];
+//vector<WorldExt*> WorldExt::Garbage[150];
 
 WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)), 
 						  Finisher(_Empty,_Empty,_Empty,_Empty),
@@ -93,6 +93,22 @@ void WorldExt::makeChild(int Level,vector<WorldExt>* ptrChild, vector<WorldExt>*
 }
 bool WorldExt::makeChild0(int Level)  //MOVELINE
 {
+	if (P.FirstBlankLine()>=1)
+	{
+		for (int j=1; j<=8; j++)
+		{
+			Card hand=P.Peek(j);
+			if (hand!=NULL)
+			{
+				WorldExt* that=this->copy();
+				if (!ChildRoutine(that->MOVELINE(NULL,hand),that,Level))
+				{	delete that; continue;
+				}else
+				{	delete that; return true;
+				}
+			}
+		}
+	}
 	int i,j;
 	for ( i=1; i<=8; i++)
 	{
@@ -102,7 +118,7 @@ bool WorldExt::makeChild0(int Level)  //MOVELINE
 			{
 				Card upper=this->P.Peek(i);
 				Card lower=this->P.Peek(j);
-				if (lower!=NULL  &&				//在這裡不檔(upper==NULL)
+				if (lower!=NULL  &&	upper!=NULL	&&		//在這裡不檔(upper==NULL)
 					lower.GetSuit()!=NONE &&
 					upper.GetSuit()!=NONE)
 				{
@@ -294,6 +310,8 @@ bool WorldExt::POP(Card that)
 	{
 		HistoryItem Last= History[ History.size()-1 ];
 		if (Last.Action==ACTION_TYPE::DOWN && Last.Card1==that) 
+			return false;
+		if (Last.Action==ACTION_TYPE::CONNECT && Last.Card2==that)
 			return false;
 	}
 	return World::POP(that);

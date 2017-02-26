@@ -11,6 +11,7 @@ public:
 	int Total_Work;
 	int Cur_Pos;
 	int Selection;
+	static int InitObsNum;
 	bool isComplete;
 
 	Sage(WorldExt inn);

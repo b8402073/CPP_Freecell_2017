@@ -1,8 +1,10 @@
 #include "Sage.h"
+int Sage::InitObsNum=0;
 Sage::Sage(WorldExt inn)
 :root(inn),isComplete(false)
 {
 	Selection=100;
+	Sage::InitObsNum=World::Total_Obstruction_AV(inn);
 	MakeStone4(root);
 }
 Sage::Sage(WorldExt inn,int Select)
@@ -76,9 +78,6 @@ WorldExt Sage::RightFS(WorldExt inn)
 		cout<<"x="<<x<<" ";
 		cout<<endl<< NexLayer->at(0).str()<<endl;
 		cout<<"AnsSize="<<Answers.size()<<endl;
-		//const HistoryItem F6D=ItemFinish(D6);
-		//if (EqualHistoryItem(NexLayer->at(0).History[ NexLayer->at(0).History.size()-1 ] ,F6D))
-		//	cout<<"haha"<<endl;
 		if (NexLayer->size()>0)
 		{
 			if (!Best.equals(&WorldExt::NoAnswer))
@@ -101,12 +100,21 @@ WorldExt Sage::RightFS(WorldExt inn)
 			if (Answers.size() >= 1)
 			{
 				std::sort(Answers.begin(), Answers.end(), GoodSolution);
-				if (!Answers[0].equals(&Best))
+				//old if (!Answers[0].equals(&Best))
+				if (!EqualHistoryVector(Answers[0].History, Best.History))
 				{
-					if (BetterHistoryArbitary(Answers[0].History, Best.History))
+					if (!Best.equals(&WorldExt::NoAnswer))
 					{
-						return Answers[0];
+						if (BetterHistoryArbitary(Answers[0].History, Best.History))
+						{
+							Answers.erase(Answers.begin()+1,Answers.end());
+							Best=Answers[0];							
+						}
+					}else
+					{
+						Best=Answers[0];
 					}
+					return Best;
 				}
 			}
 			if (NexLayer->size()>0)
@@ -245,23 +253,36 @@ bool TotalAV(const World& X,const World& Y)
 }
 bool TotalAV_SpEdition(const World& X,const World& Y)
 {
+	int x0= World::Total_Obstruction_AV(X);
+	int y0= World::Total_Obstruction_AV(Y);
 	const bool WHEN_WE_DONT_CARE=false;
-	int x2= World::Total_Obstruction_AV(X);
-	int y2= World::Total_Obstruction_AV(Y);
-	if (x2<y2)
+	int x1,y1;
+	if (x0>= Sage::InitObsNum/2 && y0>=Sage::InitObsNum/2)
+	{
+		x1= X.P.CardNum()-X.P.Available();
+		y1= Y.P.CardNum()-Y.P.Available();
+	}else
+	{
+		x1= X.P.CardNum();
+		y1= Y.P.CardNum();
+	}
+	if (x1<y1)
 		return true;
-	else if (x2>y2)
+	else if (x1>y1)
 		return false;
 	else
 	{
-		int x1= X.P.CardNum()-X.P.Available();
-		int y1= Y.P.CardNum()-Y.P.Available();
-		if (x1<y1)
+		int x2= World::Total_Obstruction_AV(X);
+		int y2= World::Total_Obstruction_AV(Y);
+		if (x2< Sage::InitObsNum/2 && y2<Sage::InitObsNum)
+			goto Level5;
+		if (x2<y2)
 			return true;
-		else if (x1>y1)
+		else if (x2>y2)
 			return false;
 		else
 		{
+
 			int x3= X.P.Available();
 			int y3= Y.P.Available();
 			if (x3>y3)
@@ -278,6 +299,7 @@ bool TotalAV_SpEdition(const World& X,const World& Y)
 					return false;
 				else
 				{
+Level5:
 					int x5=X.P.MaxOf_NowMaxPos();
 					int y5=Y.P.MaxOf_NowMaxPos();
 					if (x5<y5)

@@ -1139,7 +1139,7 @@ void TestWorld6_SageAboutExample()
 	WorldExt H(EXAMPLE_PROBLEM);
 	cout<< H.str()<<endl;
 	Sage S(H);
-	assert(S.Stone.size()==3908);
+	assert(S.Stone.size()==3435);
 	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
 	S.Run1(true);
 	cout<< S.Result.str()<<endl;

@@ -23,5 +23,5 @@ bool		BetterHistoryItem(HistoryItem H1,HistoryItem H2);
 bool		BetterHistoryEqualSize(const vector<HistoryItem>& dst,const vector<HistoryItem>& src);
 
 bool		BetterHistoryArbitary(const vector<HistoryItem>& dst ,const vector<HistoryItem>& src);/*本函式只應用來比較兩個Complete World的歷程哪一個比較好*/
-
+bool		EqualHistoryVector(const vector<HistoryItem>& H1, const vector<HistoryItem>& H2);
 #endif
