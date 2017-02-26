@@ -17,7 +17,9 @@ void Sage::MakeStone4(WorldExt inn)
 {
 	if (inn.isComplete())
 	{
-		isComplete=true; return;
+		isComplete=true; 
+		Answers.push_back(inn);
+		return;
 	}
 	vector< vector<WorldExt>* > stack;
 	vector<WorldExt>* NexLayer=new vector<WorldExt>();
@@ -58,22 +60,23 @@ void Sage::MakeStone4(WorldExt inn)
 	{
 		delete (stack[k]);
 	}
-
+	if (Answers.size()>0)
+		isComplete=true;
 }
 
 WorldExt Sage::RightFS(WorldExt inn)
 {
-	WorldExt& Best=WorldExt::NoAnswer;
+	WorldExt Best=WorldExt::NoAnswer;
 	if (Answers.size()>0) {
 		std::sort(Answers.begin(), Answers.end(), GoodSolution);
 		Answers.erase(Answers.begin()+1,Answers.end());
 		Best= Answers[0];
 	}
 	Answers.clear();
-	const int MaxHeight=300;
+	const int MaxHeight=150;
 	vector<WorldExt>* NexLayer=new vector<WorldExt>();
-	inn.makeChild(5,NexLayer,&Answers);	
-	for (int x=6; x<MaxHeight; x++)
+	inn.makeChild(inn.History.size(),NexLayer,&Answers);	
+	for (int x=inn.History.size()+1; x<MaxHeight; x++)
 	{
 		cout<<"x="<<x<<" ";
 		cout<<endl<< NexLayer->at(0).str()<<endl;
@@ -85,6 +88,7 @@ WorldExt Sage::RightFS(WorldExt inn)
 				if (NexLayer->at(0).History.size() +NexLayer->at(0).P.CardNum() > Best.History.size() )
 				{
 					//這一群解不用找了
+					delete NexLayer;
 					return WorldExt::NoAnswer;
 				}
 			}
@@ -114,17 +118,23 @@ WorldExt Sage::RightFS(WorldExt inn)
 					{
 						Best=Answers[0];
 					}
+					delete NexLayer;
 					return Best;
 				}
 			}
 			if (NexLayer->size()>0)
 			{
 				continue;
-			}else
+			}else {
+				delete NexLayer;
 				return WorldExt::NoAnswer;
-		}else
+			}
+		}else {
+			delete NexLayer;
 			return WorldExt::NoAnswer;
-	}	
+		}
+	}
+	delete NexLayer;
 	return WorldExt::NoAnswer;
 }
 
@@ -134,8 +144,11 @@ WorldExt Sage::RightFS(WorldExt inn)
  */
 bool Sage::Run1(bool prt_debug)  
 {
-	if (Answers.size()>0)
+	if (Answers.size()>0) {
+		std::sort(Answers.begin(), Answers.end(), GoodSolution);
+		Result=Answers[0];
 		return true;
+	}
 	int sz=Stone.size();
 	for (int i=0; i<sz; i++)
 	{
@@ -162,8 +175,6 @@ bool Sage::Run1(bool prt_debug)
  */
 bool Sage::Run2(bool prt_debug)
 {
-	if (isComplete)
-		return true	;
 	for (int i=0; i<Stone.size(); i++)
 	{
 		Cur_Pos=i;
@@ -174,19 +185,17 @@ bool Sage::Run2(bool prt_debug)
 			printf("%s\r\n",ctime(&t));
 		}
 		WorldExt hand=RunX(prt_debug,i);
-		isComplete=false;
-		if (hand.isComplete())
+		if (!hand.equals(&WorldExt::NoAnswer))
 		{
-			if (Result.History.size()==0)
+			if (Result.History.size()==0) 
 			{
 				Result=hand;
-			}else
-			{
-				if (BetterHistoryArbitary(hand.History, Result.History))
-				{
-					Result=hand;
-				}
 			}
+			else if (BetterHistoryArbitary(hand.History, Result.History))
+			{
+				Result=hand;
+			}
+			
 		}
 		cout<<Result.str()<<endl;
 	}
@@ -200,14 +209,15 @@ WorldExt Sage::RunX(bool prt_debug,int X)
 		return true;
 	int sz=Stone.size();
 	assert(X>=0 && X<sz);	
+	Answers.clear();
+	if (Result.History.size()>0)
+		Answers.push_back(Result);
 	
-	//WorldExt hand=RightFS(Stone[X]);
-	/*
-	if (hand.isComplete())
+	WorldExt hand=RightFS(Stone[X]);
+	if (!hand.equals(&WorldExt::NoAnswer)) {
+		//Result=hand;
 		return hand;
-	isComplete=true;
-	*/
-
+	}
 	return WorldExt::NoAnswer;
 }
 bool TotalAV(const World& X,const World& Y)

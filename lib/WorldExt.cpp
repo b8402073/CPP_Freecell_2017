@@ -2,7 +2,7 @@
 #include "WorldExt.h"
 //vector<WorldExt*> WorldExt::Garbage[150];
 
-WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)), 
+const WorldExt WorldExt::NoAnswer=WorldExt(Problem(Buffer(_NO_ANSWER_MB)), 
 						  Finisher(_Empty,_Empty,_Empty,_Empty),
 						  vector<HistoryItem>(0) );
 

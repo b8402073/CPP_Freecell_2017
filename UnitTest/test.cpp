@@ -1136,6 +1136,7 @@ void TestWorld5_MissionImpossible()
 
 void TestWorld6_SageAboutExample()
 {
+	/*
 	WorldExt H(EXAMPLE_PROBLEM);
 	cout<< H.str()<<endl;
 	Sage S(H);
@@ -1143,4 +1144,16 @@ void TestWorld6_SageAboutExample()
 	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
 	S.Run1(true);
 	cout<< S.Result.str()<<endl;
+	*/
+
+	WorldExt H(EXAMPLE_PROBLEM);
+	H.POP(S13);
+	WorldExt K=H;
+	cout<<"K:"<<endl;
+	cout<< K.str()<<endl;
+
+	WorldExt A(EXAMPLE_PROBLEM);
+	Sage P(A);
+	P.Run2(true);
+	cout<< P.Result.str();
 }
