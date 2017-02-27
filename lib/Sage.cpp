@@ -15,6 +15,7 @@ Sage::Sage(WorldExt inn,int Select)
 
 void Sage::MakeStone4(WorldExt inn)
 {
+
 	if (inn.isComplete())
 	{
 		isComplete=true; 
@@ -23,6 +24,7 @@ void Sage::MakeStone4(WorldExt inn)
 	}
 	vector< vector<WorldExt>* > stack;
 	vector<WorldExt>* NexLayer=new vector<WorldExt>();
+
 	inn.makeChild(0,NexLayer,&Answers);
 	stack.push_back(NexLayer);
 	for (int i=1; i<4; i++)    //進行四層的MakeChild
@@ -60,6 +62,7 @@ void Sage::MakeStone4(WorldExt inn)
 	{
 		delete (stack[k]);
 	}
+
 	if (Answers.size()>0)
 		isComplete=true;
 }

@@ -486,6 +486,7 @@ vector<Card>  World::UserFinish(const World *inn)
 			}
 		}
 	}while(flag);
+	delete inW;
 	return ret;
 }
 string World::GetBufStrings() const

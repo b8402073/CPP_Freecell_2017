@@ -1,3 +1,10 @@
+/*
+These code are testing Memory Leakage...
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+*/
+
 
 //#include <string>
 //#include "card.h"
@@ -52,10 +59,12 @@ void TestBuffer();
 void TestProblem();
 void TestWorld();
 void TestWorldExt();
+void TestAboutLeakage();
 
 
 void TestBeforeSage() 
 {
+	TestAboutLeakage();
 	TestWorld5_MissionImpossible();
 	//TestWorld4_About_NoAnswer();
 	TestWorld6_SageAboutExample();
@@ -1136,36 +1145,14 @@ void TestWorld5_MissionImpossible()
 
 void TestWorld6_SageAboutExample()
 {
-	/*
-	WorldExt H(EXAMPLE_PROBLEM);
-	cout<< H.str()<<endl;
-	Sage S(H);
-	assert(S.Stone.size()==3435);
-	cout<<"S.Stone.size()="<<S.Stone.size()<<endl;
-	S.Run1(true);
-	cout<< S.Result.str()<<endl;
-	*/
-
-	/*
-	WorldExt H(EXAMPLE_PROBLEM);
-	H.POP(S13);
-	WorldExt K=H;
-	cout<<"K:"<<endl;
-	cout<< K.str()<<endl;
-
-	*/
 
 	WorldExt A(EXAMPLE_PROBLEM);
 	Sage P(A);
-	P.Run2(true);
-	/*
-	for (int i=77; i<3435; i++)
-	{
-		cout<<endl<<"i="<<i<<endl;
-		P.RunX(true,i);
-	}
-	*/
-	cout<< P.Result.str();
-	
 
+	P.Run2(true);
+	cout<< P.Result.str();
+}
+void TestAboutLeakage()
+{
+	cout<<"µ²ªGWorld::UserFinish"<<endl;
 }
