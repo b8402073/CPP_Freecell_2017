@@ -1,40 +1,40 @@
 #include "World.h"
 World::World()
-:tmpNPItem(NULL),F(C13,D13,H13,S13)
+:tmpNPItem(NULL),F(C13,D13,H13,S13),BeforeChange(NULL)
 {
 }
 
 World::World(int i)
-:tmpNPItem(NULL),P(i),F(_Empty,_Empty,_Empty,_Empty)
+:tmpNPItem(NULL),P(i),F(_Empty,_Empty,_Empty,_Empty),BeforeChange(NULL)
 {
 }
 
 World::World(const Problem& PP)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher())
+:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {}
 
 World::World(const Problem& PP,const Finisher&FF)
-:tmpNPItem(NULL),P(PP),F(FF)
+:tmpNPItem(NULL),P(PP),F(FF),BeforeChange(NULL)
 {
 	Finisher tmp=P.Synthesize_Finisher();
 	assert(tmp.equals(&F));
 }
 
 World::World(const Problem& PP,vector<HistoryItem> HH)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher())
+:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {
 	//std::copy(HH.begin(), HH.end(), History.begin());
 	History.insert(History.end(), HH.begin(), HH.end());
 }
 
 World::World(const Problem& PP,const Finisher& FF,vector<HistoryItem> HH)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher())
+:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {
 	//std::copy(HH.begin(), HH.end(), History.begin());
 	History.insert(History.end(), HH.begin(), HH.end());
 }
 World::World(const World& WW)
-:tmpNPItem(NULL),P(WW.P), F(WW.F)
+:tmpNPItem(NULL),P(WW.P), F(WW.F),BeforeChange(NULL)
 {
 	//std::copy(WW.History.begin(), WW.History.end(), History.begin() );  //由BBS理解到這個寫法的問題
 	History.insert(History.end(), WW.History.begin(), WW.History.end() );
@@ -108,6 +108,7 @@ void World::ReleaseWorld()
 {
 	bfChangeHistory.clear();
 	delete BeforeChange;
+	BeforeChange=NULL;
 }
 bool World::MOVELINE(int srcLine,int dstLine)
 {
@@ -381,8 +382,45 @@ string World::str(bool ShowHistory, bool ShowFinisher) const
 }
 bool World::isDead() const
 {
-	if (P.Available()>0)
+	if (P.Available()==0)
+		return isDead0();
+	else if (P.FirstBlankLine()>=1)
 		return false;
+
+	vector<Card> FF= UserFinish(this);
+	if (FF.size()>0)
+		return false;
+	int PA=P.Available();
+	if (PA<=2)
+	{
+		vector<Card> Consider;
+		for (int i=1; i<=8; i++)
+		{
+			Card that= P.Peek(i);
+			Consider.push_back(that);
+			if (PA==2)
+			{
+				Card that2= P.AHead(that);
+				if (that2!=_Empty)
+					Consider.push_back(that2);
+			}
+		}
+		for (int x=0; x<Consider.size(); x++)
+		{
+			for (int y=0; y<Consider.size(); y++)
+			{
+				if (Problem::Rule(Consider[x],Consider[y]))
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}else
+		return false;
+}
+bool World::isDead0() const
+{
 	for (int i=0; i< P.GetBufferSize(); i++)
 	{
 		Card BufCard= P.PeekBuffer(i);
@@ -625,5 +663,9 @@ bool World::CardNum_TotalAV(const World& X,const World& Y)
 
 World::~World()
 {
+	if (BeforeChange!=NULL)
+	{
+		delete BeforeChange;
+	}
 	ReleaseNPItem();
 }

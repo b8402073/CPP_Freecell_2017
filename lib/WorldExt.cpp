@@ -359,6 +359,7 @@ bool WorldExt::CONNECT(Card Upper,Card Lower)
 	return World::CONNECT(Upper,Lower);
 }
 
+
 void Dump(const vector<WorldExt>& vec,string filename)
 {
 	ofstream outfile(filename.c_str());

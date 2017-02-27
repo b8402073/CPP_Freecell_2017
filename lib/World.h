@@ -24,7 +24,7 @@ public:
 	World(const Problem& PP,vector<HistoryItem> HH);
 	World(const Problem& PP,const Finisher& FF,vector<HistoryItem> HH);
 	World(const World& WW);
-	~World();
+	virtual ~World();
 	World* copy() const;
 	Card PeekCard(int line,int srow) const;
 	Card FinisherTop(CardSuit S) const;
@@ -54,7 +54,8 @@ public:
 	string HistoryToString(int inn,bool head) const;
 	string str() const;
 	string str(bool ShowHistory,bool ShowFinisher) const;
-	bool isDead() const;
+	bool isDead()  const;
+	bool isDead0() const;
 	static vector<Card> UserFinish(const World* inn);
 
 	string GetBufStrings() const;

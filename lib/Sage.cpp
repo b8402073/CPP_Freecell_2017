@@ -79,8 +79,8 @@ WorldExt Sage::RightFS(WorldExt inn)
 	for (int x=inn.History.size()+1; x<MaxHeight; x++)
 	{
 		cout<<"x="<<x<<" ";
-		cout<<endl<< NexLayer->at(0).str()<<endl;
-		cout<<"AnsSize="<<Answers.size()<<endl;
+		//cout<<endl<< NexLayer->at(0).str()<<endl;
+		//cout<<"AnsSize="<<Answers.size()<<endl;
 		if (NexLayer->size()>0)
 		{
 			if (!Best.equals(&WorldExt::NoAnswer))

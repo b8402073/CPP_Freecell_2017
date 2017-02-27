@@ -674,7 +674,11 @@ vector<Card> NP::getVector()
 byte* NP::VectorToBytes(vector<Card> that)
 {	
 	byte* ret=new byte[that.size()];
-	std::copy( that.begin(), that.end(), ret);
+	//std::copy( that.begin(), that.end(), ret);   //@@? why this is not safe?
+	for (int i=0; i<that.size(); i++)
+	{
+		ret[i]= that[i];
+	}
 	return ret;
 }
 void NP::PrintVector(vector<Card> that)

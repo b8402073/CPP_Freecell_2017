@@ -48,6 +48,8 @@ public:
 	bool DOWN(Card that);
 	static const WorldExt NoAnswer;
 	//static vector<WorldExt*> Garbage[150];
+public:
+	~WorldExt() {}
 };
 
 //static vector<WorldExt*> Garbage[150];
