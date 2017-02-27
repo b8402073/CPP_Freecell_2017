@@ -1,5 +1,6 @@
+
+//These code are testing Memory Leakage...
 /*
-These code are testing Memory Leakage...
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
@@ -60,14 +61,14 @@ void TestProblem();
 void TestWorld();
 void TestWorldExt();
 void TestAboutLeakage();
-
+void routine();
 
 void TestBeforeSage() 
 {
 	TestAboutLeakage();
 	TestWorld5_MissionImpossible();
 	//TestWorld4_About_NoAnswer();
-	TestWorld6_SageAboutExample();
+	//TestWorld6_SageAboutExample();
 }
 
 int main()
@@ -1111,7 +1112,9 @@ void TestWorldExt()
 
 	cout<<"2017/02/05"<<endl;
 	cout<<"https://github.com/b8402073/CPP_Freecell_2017.git"<<endl;
-
+	
+	cout<<"2017/02/28"<<endl;
+	cout<<"找到可以偵測memory leakage的方法,放入test.cpp"<<endl;
 	//getchar();
 }
 
@@ -1154,5 +1157,16 @@ void TestWorld6_SageAboutExample()
 }
 void TestAboutLeakage()
 {
-	cout<<"結果World::UserFinish"<<endl;
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+	_CrtDumpMemoryLeaks();
+	routine();
+	_CrtDumpMemoryLeaks();
+	cout<<"結果在'輸出'中不應該出現文字"<<endl;
+}
+void routine()
+{
+	vector<WorldExt> NexLayer;
+	vector<WorldExt> Ans;
+	WorldExt A(MissionImpossible);
+	A.makeChild(0,&NexLayer,&Ans);
 }
