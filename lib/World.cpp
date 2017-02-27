@@ -663,9 +663,11 @@ bool World::CardNum_TotalAV(const World& X,const World& Y)
 
 World::~World()
 {
+/*
 	if (BeforeChange!=NULL)
 	{
 		delete BeforeChange;
 	}
+*/
 	ReleaseNPItem();
 }
