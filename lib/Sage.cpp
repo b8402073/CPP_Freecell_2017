@@ -187,18 +187,6 @@ bool Sage::Run2(bool prt_debug)
 			printf("%s\r\n",ctime(&t));
 		}
 		WorldExt hand=RunX(prt_debug,i);
-		if (!hand.equals(&WorldExt::NoAnswer))
-		{
-			if (Result.History.size()==0) 
-			{
-				Result=hand;
-			}
-			else if (BetterHistoryArbitary(hand.History, Result.History))
-			{
-				Result=hand;
-			}
-			
-		}
 		cout<<Result.str()<<endl;
 	}
 	if (Result.History.size()>0)

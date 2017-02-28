@@ -1,52 +1,43 @@
 #include "World.h"
 World::World()
-:tmpNPItem(NULL),F(C13,D13,H13,S13),BeforeChange(NULL)
+:F(C13,D13,H13,S13),BeforeChange(NULL)
 {
 }
 
 World::World(int i)
-:tmpNPItem(NULL),P(i),F(_Empty,_Empty,_Empty,_Empty),BeforeChange(NULL)
+:P(i),F(_Empty,_Empty,_Empty,_Empty),BeforeChange(NULL)
 {
 }
 
 World::World(const Problem& PP)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
+:P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {}
 
 World::World(const Problem& PP,const Finisher&FF)
-:tmpNPItem(NULL),P(PP),F(FF),BeforeChange(NULL)
+:P(PP),F(FF),BeforeChange(NULL)
 {
 	Finisher tmp=P.Synthesize_Finisher();
 	assert(tmp.equals(&F));
 }
 
 World::World(const Problem& PP,vector<HistoryItem> HH)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
+:P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {
 	//std::copy(HH.begin(), HH.end(), History.begin());
 	History.insert(History.end(), HH.begin(), HH.end());
 }
 
 World::World(const Problem& PP,const Finisher& FF,vector<HistoryItem> HH)
-:tmpNPItem(NULL),P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
+:P(PP),F(PP.Synthesize_Finisher()),BeforeChange(NULL)
 {
 	//std::copy(HH.begin(), HH.end(), History.begin());
 	History.insert(History.end(), HH.begin(), HH.end());
 }
 World::World(const World& WW)
-:tmpNPItem(NULL),P(WW.P), F(WW.F),BeforeChange(NULL)
+:P(WW.P), F(WW.F),BeforeChange(NULL)
 {
 	//std::copy(WW.History.begin(), WW.History.end(), History.begin() );  //由BBS理解到這個寫法的問題
 	History.insert(History.end(), WW.History.begin(), WW.History.end() );
-
-	/*底下可以跑 */
-	/*
-	for (int i=0; i<WW.History.size(); i++)
-	{
-		History.push_back( WW.History[i] );
-	}
-	*/
-
 }
 
 
@@ -671,11 +662,5 @@ bool World::CardNum_TotalAV(const World& X,const World& Y)
 
 World::~World()
 {
-/*
-	if (BeforeChange!=NULL)
-	{
-		delete BeforeChange;
-	}
-*/
 	ReleaseNPItem();
 }
