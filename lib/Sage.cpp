@@ -3,7 +3,7 @@ int Sage::InitObsNum=0;
 Sage::Sage(WorldExt inn)
 :root(inn),isComplete(false)
 {
-	Selection=100;
+	Selection=300;
 	Sage::InitObsNum=World::Total_Obstruction_AV(inn);
 	MakeStone4(root);
 }
@@ -72,10 +72,9 @@ WorldExt Sage::RightFS(WorldExt inn)
 	WorldExt Best=WorldExt::NoAnswer;
 	if (Answers.size()>0) {
 		std::sort(Answers.begin(), Answers.end(), GoodSolution);
-		Answers.erase(Answers.begin()+1,Answers.end());
 		Best= Answers[0];
+		Answers.clear();
 	}
-	Answers.clear();
 	const int MaxHeight=150;
 	vector<WorldExt>* NexLayer=new vector<WorldExt>();
 	inn.makeChild(inn.History.size(),NexLayer,&Answers);	
@@ -103,7 +102,7 @@ WorldExt Sage::RightFS(WorldExt inn)
 				target.makeChild(x,NexLayer,&Answers);
 			}
 			delete old;
-			Sort_and_RemoveDuplication(NexLayer);
+ 			Sort_and_RemoveDuplication(NexLayer);
 			if (Answers.size() >= 1)
 			{
 				std::sort(Answers.begin(), Answers.end(), GoodSolution);
@@ -181,7 +180,7 @@ bool Sage::Run2(bool prt_debug)
 	for (int i=0; i<Stone.size(); i++)
 	{
 		Cur_Pos=i;
-		if (prt_debug)
+		if (prt_debug)	
 		{
 			cout<< Cur_Pos <<"/" << Stone.size()<<"\t\t\t";
 			time_t t=time(NULL);
@@ -218,7 +217,7 @@ WorldExt Sage::RunX(bool prt_debug,int X)
 	
 	WorldExt hand=RightFS(Stone[X]);
 	if (!hand.equals(&WorldExt::NoAnswer)) {
-		//Result=hand;
+		Result=hand;
 		return hand;
 	}
 	return WorldExt::NoAnswer;
@@ -303,39 +302,30 @@ bool TotalAV_SpEdition(const World& X,const World& Y)
 			else if (x3<y3)
 				return false;
 			else
-			{
-				int x4=X.P.CardNum();
-				int y4=Y.P.CardNum();
-				if (x4<y4)
+			{				
+Level5:
+				int x5=X.P.MaxOf_NowMaxPos();
+				int y5=Y.P.MaxOf_NowMaxPos();
+				if (x5<y5)
 					return true;
-				else if (x4>y4)
+				else if (x5>y5)
 					return false;
 				else
 				{
-Level5:
-					int x5=X.P.MaxOf_NowMaxPos();
-					int y5=Y.P.MaxOf_NowMaxPos();
-					if (x5<y5)
+					string x6=X.P.str();
+					string y6=Y.P.str();
+					if (x6<y6)
 						return true;
-					else if (x5>y5)
+					else if (x6>y6)
 						return false;
 					else
 					{
-						string x6=X.P.str();
-						string y6=Y.P.str();
-						if (x6<y6)
+						if (BetterHistoryEqualSize(X.History,Y.History))
 							return true;
-						else if (x6>y6)
-							return false;
-						else
-						{
-							if (BetterHistoryEqualSize(X.History,Y.History))
-								return true;
-							else 
-								return false;  //因為WHEN_WE_DONT_CARE也傳回false							
-						}
+						else 
+							return false;  //因為WHEN_WE_DONT_CARE也傳回false							
 					}
-				}
+				}				
 			}
 		}
 	}

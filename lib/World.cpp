@@ -368,13 +368,18 @@ string World::HistoryToString(int StartPos,bool head) const
 }
 string World::str() const
 {
-	return str(true,true);
+	return str(true,true,true);
 }
-string World::str(bool ShowHistory, bool ShowFinisher) const
+string World::str(bool ShowHistory, bool ShowFinisher,bool ShowTail) const
 {
 	string ret;
 	if (ShowHistory)
 		ret+=HistoryToString(0,true);
+	if (ShowTail) {
+		static char _sbuf[6];
+		ret+=("Tail=" );
+		ret+=(itoa(Tail(History),_sbuf,10));
+	}
 	if (ShowFinisher)
 		ret+= ("Finisher:"+F.str()+"\r\n");
 	ret+= (P.str() );
@@ -394,6 +399,8 @@ bool World::isDead() const
 	if (PA<=2)
 	{
 		vector<Card> Consider;
+		for (int i=0; i< P.GetBufferSize(); i++)
+			Consider.push_back(P.PeekBuffer(i));
 		for (int i=1; i<=8; i++)
 		{
 			Card that= P.Peek(i);

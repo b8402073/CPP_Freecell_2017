@@ -68,7 +68,7 @@ void TestBeforeSage()
 	TestAboutLeakage();
 	TestWorld5_MissionImpossible();
 	//TestWorld4_About_NoAnswer();
-	//TestWorld6_SageAboutExample();
+	TestWorld6_SageAboutExample();
 }
 
 int main()
@@ -1161,7 +1161,7 @@ void TestAboutLeakage()
 	_CrtDumpMemoryLeaks();
 	routine();
 	_CrtDumpMemoryLeaks();
-	cout<<"結果在'輸出'中不應該出現文字"<<endl;
+	cout<<"debug mode在結果在'輸出'中不應該出現文字"<<endl;
 }
 void routine()
 {

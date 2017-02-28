@@ -31,6 +31,6 @@ private:
 };
 bool TotalAV_SpEdition(const World& X,const World& Y);
 bool TotalAV(const World& X,const World& Y);
-inline bool EqualWorldExt(const WorldExt& X,const WorldExt& Y){ return X.equals(&Y); }
+inline bool EqualWorldExt(const WorldExt& X,const WorldExt& Y){ return X.ValueEquals(&Y); }
 bool GoodSolution(const WorldExt& X, const WorldExt& Y);
 #endif

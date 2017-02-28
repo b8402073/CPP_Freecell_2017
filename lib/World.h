@@ -53,7 +53,7 @@ public:
 	bool isComplete() const;
 	string HistoryToString(int inn,bool head) const;
 	string str() const;
-	string str(bool ShowHistory,bool ShowFinisher) const;
+	string str(bool ShowHistory,bool ShowFinisher,bool ShowTail) const;
 	bool isDead()  const;
 	bool isDead0() const;
 	static vector<Card> UserFinish(const World* inn);
